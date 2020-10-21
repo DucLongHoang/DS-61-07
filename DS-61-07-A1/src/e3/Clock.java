@@ -2,8 +2,10 @@ package e3;
 
 public class Clock {
 
+    public enum Period {AM, PM}
+
     private int hours, minutes, seconds;
-    private Period period;
+    private Clock.Period period;
 
     /**
      * Creates a Clock instance parsing a String .
@@ -23,9 +25,12 @@ public class Clock {
 
         // check if 12h or 24h format
         if(s.length() > 8) {
-            if(hours > 11) throw new IllegalArgumentException("Not a valid hour");
+            if(hours > 12) throw new IllegalArgumentException("Not a valid hour");
             this.hours = hours;
-            this.period = (s.toUpperCase().contains("AM")) ? Period.AM : Period.PM;
+            String period = s.toUpperCase();
+            if(period.contains("AM") || period.contains("PM")){
+                this.period = (period.contains("AM")) ? Clock.Period.AM : Clock.Period.PM;
+            } else throw new IllegalArgumentException("Not a valid hour");
         }
         else {
             if(hours > 23) throw new IllegalArgumentException("Not a valid hour");
@@ -63,7 +68,7 @@ public class Clock {
      * hour .
      */
     public Clock (int hours, int minutes, int seconds, Period period ) {
-        if(hours > 11 || minutes > 59 || seconds > 59){
+        if(hours > 12 || minutes > 59 || seconds > 59){
             throw new IllegalArgumentException("Not a valid hour.");
         }
         this.hours = hours;
@@ -78,7 +83,8 @@ public class Clock {
      */
     public int getHours24 () {
         if (this.period == null) return this.hours;
-        else return (this.period == Period.AM) ? this.hours : (this.hours + 12);
+        else if(this.period == Clock.Period.AM && this.hours == 12) return 0;
+        else return (this.period == Clock.Period.AM) ? (this.hours) : (this.hours + 12);
     }
 
     /**
@@ -86,7 +92,7 @@ public class Clock {
      * @return the hours in 12h format
      */
     public int getHours12 () {
-        return (this.hours > 11) ? (this.hours - 12) : this.hours;
+        return (this.hours > 12) ? (this.hours - 12) : this.hours;
     }
 
     /**
@@ -112,7 +118,7 @@ public class Clock {
      */
     public Period getPeriod () {
         if (this.period != null) return this.period;
-        return (this.getHours24() > 11) ? Period.PM : Period.AM;
+        return (this.getHours24() > 11) ? Clock.Period.PM : Clock.Period.AM;
     }
 
     /**

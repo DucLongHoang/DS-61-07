@@ -13,7 +13,7 @@ public class StringUtilities {
      * @param upperBound is the end of the interval
      * @return a number that is in the interval <lowerBound; upperBound>
      */
-    public static int getRandomFromRange(int lowerBound, int upperBound){
+    private static int getRandomFromRange(int lowerBound, int upperBound){
         Random r = new Random();
         return r.nextInt(upperBound + 1 - lowerBound) + lowerBound;
     }
@@ -23,7 +23,7 @@ public class StringUtilities {
      * @param array is the array to check
      * @return true if array is in ascending order, else return false
      */
-    public static boolean isAscending(int[] array){
+    private static boolean isAscending(int[] array){
         for(int i = 1; i < array.length; i++){
             if(array[i] < array[i - 1]){
                 return false;
@@ -42,7 +42,7 @@ public class StringUtilities {
      * @param c is the string-mix that contains letters of string s
      * @return an array with filled with positions of letter in String s
      */
-    public static int[] getArrayWithPositions(String s, String c){
+    private static int[] getArrayWithPositions(String s, String c){
         int[] array = new int[s.length()];
 
         for(int i = 0; i < array.length; i++) {
@@ -119,6 +119,7 @@ public class StringUtilities {
     public static void main(String[] args){
         System.out.println(generateRandomValidMix("Bye" , "World"));
         System.out.println("This is a valid mix: " + isValidMix("Black", "Tiger", "TiBlgaerck"));
+
 
     }
 
