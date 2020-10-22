@@ -1,9 +1,14 @@
 package e3;
 
+/**
+ * Doesn't need much comments, this whole class is self-explanatory
+ * as it is just making constructors and getters
+ */
 public class Clock {
 
     public enum Period {AM, PM}
 
+    // parameters of the class
     private int hours, minutes, seconds;
     private Clock.Period period;
 
@@ -19,12 +24,14 @@ public class Clock {
         int minutes = Integer.parseInt(s.substring(3,5));
         int seconds = Integer.parseInt(s.substring(6, 8));
 
+        // self explanatory condition...
         if(minutes > 59 || seconds > 59) throw new IllegalArgumentException("Not a valid hour");
         this.minutes = minutes;
         this.seconds = seconds;
 
         // check if 12h or 24h format
         if(s.length() > 8) {
+            // this is 12h format
             if(hours > 12) throw new IllegalArgumentException("Not a valid hour");
             this.hours = hours;
             String period = s.toUpperCase();
@@ -33,6 +40,7 @@ public class Clock {
             } else throw new IllegalArgumentException("Not a valid hour");
         }
         else {
+            // this is 24h format
             if(hours > 23) throw new IllegalArgumentException("Not a valid hour");
             this.hours = hours;
         }
@@ -83,7 +91,16 @@ public class Clock {
      */
     public int getHours24 () {
         if (this.period == null) return this.hours;
+
+        /*
+        *  this the a most bullshit condition...
+        *  I highly disagree that 12:00:00 AM is the same as midnight
+        *  Because if 12PM is midnight then 12AM should be noon, not midnight...
+        *  but whatever, if this is what the test requires, then so be it...
+        */
         else if(this.period == Clock.Period.AM && this.hours == 12) return 0;
+
+
         else return (this.period == Clock.Period.AM) ? (this.hours) : (this.hours + 12);
     }
 

@@ -2,9 +2,6 @@ package e1;
 
 import java.util.Random;
 
-/**
- * Something...something...shared, does it work in Linux as well? Who knows...
- */
 public class StringUtilities {
 
     /**
@@ -26,6 +23,7 @@ public class StringUtilities {
     private static boolean isAscending(int[] array){
         for(int i = 1; i < array.length; i++){
             if(array[i] < array[i - 1]){
+                // return false if following element is smaller than the previous one
                 return false;
             }
         }
@@ -43,12 +41,16 @@ public class StringUtilities {
      * @return an array with filled with positions of letter in String s
      */
     private static int[] getArrayWithPositions(String s, String c){
+        // array with size of letters of String s (in our case String a and String b)
         int[] array = new int[s.length()];
 
+        // going through the letters of String s
         for(int i = 0; i < array.length; i++) {
             char letter = s.charAt(i);
+            // checking the occurrence of said letter in the mixed String
             for(int j = 0; j < c.length(); j++){
                 if(letter == c.charAt(j)){
+                    // saving the position of found letter in array
                     array[i] = j;
                     break;
                 }
@@ -70,9 +72,11 @@ public class StringUtilities {
         // if the length of String c is different than the sum of a + b -> return false
         if((a + b).length() != c.length())  return false;
 
+        // getting arrays with positions of letters in String a/b found in String c
         int[] stringA = getArrayWithPositions(a, c);
         int[] stringB = getArrayWithPositions(b, c);
 
+        // if positions are in ascending order -> order of letter is preserved
         return isAscending(stringA) && isAscending(stringB);
     }
 
@@ -86,7 +90,7 @@ public class StringUtilities {
         // length of new String
         int stringLength = (a + b).length();
 
-        // array for creating new word
+        // array and StringBuilder for creating the new String
         char[] array = new char[stringLength];
         StringBuilder result = new StringBuilder(stringLength);
 
@@ -97,12 +101,14 @@ public class StringUtilities {
         // adding letters of the first String into the array
         for(int i = 0; i < a.length(); i++){
             array[index] = a.charAt(i);
+            // getting the lower and upperBound position logic took way too much time...
             index = getRandomFromRange(index + 1, stringLength + 1 + i - a.length());
         }
 
         // adding letters of the second String in the remaining empty positions
         int indexB = 0;
         for(int i = 0; i < stringLength; i++){
+            // '\u0000' is the default value of a char array
             if(array[i] == '\u0000'){
                 array[i] = b.charAt(indexB++);
             }
