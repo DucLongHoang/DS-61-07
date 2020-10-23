@@ -5,8 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TrafficJunction {
+    
+    //duration of traffic colors
     final int green=15;
     final int yellow=5;
+     /**
+     * Possible colours of a traffic light
+     */
     public enum TrafficLight{
         RED(false), GREEN(false), AMBER(false);
         private boolean off_on;
@@ -31,18 +36,23 @@ public class TrafficJunction {
      * east and west . The north traffic light has just started its green cycle .
      */
     public TrafficJunction () {
+        // setting NORTH to GREEN
         EnumMap<TrafficLight,Integer> init=new EnumMap<>(TrafficLight.class);
         TrafficLight.GREEN.setState(true);
         init.put(TrafficLight.GREEN,0);
         lights.put("NORTH", init);
+        
+        // setting the others to RED
         init = new EnumMap<>(TrafficLight.class);
         TrafficLight.RED.setState(true);
         init.put(TrafficLight.RED,0);
         lights.put("SOUTH",init);
+        
         init = new EnumMap<>(TrafficLight.class);
         TrafficLight.RED.setState(true);
         init.put(TrafficLight.RED,0);
         lights.put("EAST",init);
+        
         init = new EnumMap<>(TrafficLight.class);
         TrafficLight.RED.setState(true);
         init.put(TrafficLight.RED,0);
@@ -60,32 +70,43 @@ public class TrafficJunction {
             if((lights.get("NORTH").get(TrafficLight.AMBER))==-1)
                 return;
         String[] rotate={"NORTH","SOUTH","EAST","WEST"};
+        // rotating through the lights N->S->E->W
         for(int i=0;i<3;i++)
         {
+            // if current traffic light is GREEN
             if(lights.get(rotate[i]).containsKey(TrafficLight.GREEN)) {
+                // check if 15 seconds have passed
                 if (lights.get(rotate[i]).get(TrafficLight.GREEN) < green) {
+                    // if not -> add +1 second
                     lights.get(rotate[i]).put(TrafficLight.GREEN, lights.get(rotate[i]).get(TrafficLight.GREEN) + 1);
                 }
-                else{
+                else{ // 15 seconds have passed
                     lights.get(rotate[i]).remove(TrafficLight.GREEN);
+                    // change current traffic light from GREEN to AMBER
                     TrafficLight.AMBER.setState(true);
-                    lights.get(rotate[i]).put(TrafficLight.AMBER,0);
+                    lights.get(rotate[i]).put(TrafficLight.AMBER,0); 
                     break;
                 }
             }
+            // if current traffic light is AMBER
             if(lights.get(rotate[i]).containsKey(TrafficLight.AMBER)) {
+                // check if 5 seconds have passed
                 if (lights.get(rotate[i]).get(TrafficLight.AMBER) < yellow) {
+                    // if not -> add +1 second
                     lights.get(rotate[i]).put(TrafficLight.AMBER, lights.get(rotate[i]).get(TrafficLight.AMBER) + 1);
                 }
-                else{
+                else{ // 5 seconds have passed
                     lights.get(rotate[i]).remove(TrafficLight.AMBER);
+                    // change current traffic light from AMBER to RED
                     TrafficLight.RED.setState(true);
                     lights.get(rotate[i]).put(TrafficLight.RED,0);
-                    if((i+1)==3) {
+                    // change the next traffic light from RED to GREEN
+                    if((i+1)==3) { // checking if at the last position 
+                        // if yes, change the first traffic light
                         lights.get(rotate[0]).remove(TrafficLight.RED);
                         lights.get(rotate[0]).put(TrafficLight.GREEN, 0);
                     }
-                    else{
+                    else{ // if not, change the next traffic light
                         lights.get(rotate[++i]).remove(TrafficLight.RED);
                         lights.get(rotate[i]).put(TrafficLight.GREEN, 0);
                     }
@@ -102,6 +123,7 @@ public class TrafficJunction {
      */
     public void amberJunction ( boolean active ) {
         if(active){
+            // set all lights to blinking amber
             this.lights.get("NORTH").clear();
             this.lights.get("SOUTH").clear();
             this.lights.get("EAST").clear();
@@ -114,8 +136,8 @@ public class TrafficJunction {
             this.lights.put("EAST",init);
             this.lights.put("WEST",init);
         }
-        else
-        {
+        else 
+        { // set all lights to initial state
             this.lights.get("NORTH").clear();
             this.lights.get("SOUTH").clear();
             this.lights.get("EAST").clear();
@@ -156,15 +178,15 @@ public class TrafficJunction {
     public String toString () {
         StringBuilder print= new StringBuilder();
         String[] rotate={"NORTH","SOUTH","EAST","WEST"};
-        if(lights.get("NORTH").containsKey(TrafficLight.AMBER))
+        if(lights.get("NORTH").containsKey(TrafficLight.AMBER)) // checking for blinking amber 
             if((lights.get("NORTH").get(TrafficLight.AMBER))==-1)
             {
                 for(String key : rotate) {
                     print.append("[").append(key).append(": AMBER ON]");
                 }
             }
-        if(print.toString().equals(""))
-        {
+        if(print.toString().equals("")) //if blinking amber is not in the string
+        { // display current state
             for(String key : rotate)
             {
                 if(lights.get(key).containsKey(TrafficLight.GREEN))
