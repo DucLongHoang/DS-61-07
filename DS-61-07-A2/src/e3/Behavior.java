@@ -1,8 +1,9 @@
 package e3;
 
 /**
- *
+ * Interface for behaviours
  */
-public interface Behavior {
-    public GunslingerAction action(Gunslinger g);
+interface Behavior {
+    GunslingerAction action(Gunslinger g);
+    String tactic();
 }

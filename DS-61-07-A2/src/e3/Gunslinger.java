@@ -3,14 +3,12 @@ package e3;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Gunslinger implements Behavior{
+public class Gunslinger {
 
     private int bullets;
     private Behavior behavior;
     private State state;
 
-    // private int rivalBullets;
-    private Gunslinger rival;
     private List<GunslingerAction> rivalActions;
 
     /**
@@ -20,31 +18,7 @@ public class Gunslinger implements Behavior{
     public Gunslinger(){
         this.state = State.ALIVE;
         this.bullets = 0;
-        this.rivalActions = new ArrayList<GunslingerAction>();
-    }
-
-    /**
-     *
-     * @param g
-     * @return
-     */
-    @Override
-    public GunslingerAction action(Gunslinger g) {
-        if(this.getLoads() + g.getLoads() == 0) {
-            this.bullets++;
-            return GunslingerAction.RELOAD;
-        }
-        if(this.getLoads() > g.getLoads()) {
-            this.bullets--;
-            return GunslingerAction.SHOOT;
-        }
-        if(this.getLoads() != 0 && g.getLoads() > this.getLoads()) {
-            this.bullets++;
-            return GunslingerAction.RELOAD;
-        }
-        if(this.getLoads() >= 5) return GunslingerAction.MACHINE_GUN;
-
-        return GunslingerAction.PROTECT;
+        this.rivalActions = new ArrayList<>();
     }
 
     /**
@@ -53,8 +27,29 @@ public class Gunslinger implements Behavior{
      * and communicates it to the class GunFight
      * @return an action to take
      */
-    public GunslingerAction action(){
-        return action(this.rival);
+    public GunslingerAction action() {
+        GunslingerAction action = this.behavior.action(this);
+        switch (action) {
+            case RELOAD -> this.bullets++;
+            case SHOOT -> this.bullets--;
+            case MACHINE_GUN -> this.bullets -= 5;
+        }
+        return action;
+    }
+
+    // checks if there are enough bullets for SHOOT/MACHINE_GUN
+    public boolean enoughBullets(){
+        return this.getLoads() >= 0;
+    }
+
+    // Clears the List with enemy actions - for new duel
+    public void clearMemory(){
+        this.rivalActions.clear();
+    }
+
+    // Setter for bullets - need to set to 0 for new duel
+    public void setLoads(int loads){
+        this.bullets = loads;
     }
 
     // Getter for the Gunslingers number of bullets
@@ -67,16 +62,18 @@ public class Gunslinger implements Behavior{
         return this.state;
     }
 
-    // changes state from ALIVE to DEAD
+    // changes state from ALIVE to DEAD and vice versa
     public void changeState(){
-        this.state = State.DEAD;
+        if(this.getState() == State.ALIVE){
+            this.state = State.DEAD;
+        } else this.state = State.ALIVE;
     }
 
     /**
      * Used by the class GunFight
      * Tells the Gunslinger the last action of the rival
      * Integration with method getRivalActions
-     * @param action
+     * @param action is the action of the rival to be recorded in the List
      */
     public void rivalAction(GunslingerAction action){
         this.rivalActions.add(action);
@@ -109,9 +106,14 @@ public class Gunslinger implements Behavior{
         return rivalBullets;
     }
 
-    // setting the behavior of the Gunslinger
+    // setting the tactic of the Gunslinger
     public void setBehavior(Behavior behavior){
         this.behavior = behavior;
+    }
+
+    // returns tactic in a String format
+    public String tactic(){
+        return this.behavior.tactic();
     }
 
 }
